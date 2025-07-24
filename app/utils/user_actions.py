@@ -2,6 +2,34 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import SessionLocal
 from app.models.user import User
 
+def deposit(user: User, amount: float):
+    if amount <= 0:
+        print("Amount must be greater than 0.")
+        return
+    db = SessionLocal()
+    user_in_db = db.query(User).filter(User.id == user.id).first()
+    user_in_db.balance_usd += amount
+    db.commit()
+    db.refresh(user_in_db)
+    db.close()
+    print(f"Deposited ${amount}. New balance: ${user_in_db.balance_usd}")
+
+def withdraw(user: User, amount: float):
+    if amount <= 0:
+        print("Amount must be greater than 0.")
+        return
+    db = SessionLocal()
+    user_in_db = db.query(User).filter(User.id == user.id).first()
+    if user_in_db.balance_usd < amount:
+        print("Insufficient funds.")
+        db.close()
+        return
+    user_in_db.balance_usd -= amount
+    db.commit()
+    db.refresh(user_in_db)
+    db.close()
+    print(f"Withdrew ${amount}. New balance: ${user_in_db.balance_usd}")
+
 def create_user(username, password):
     session = SessionLocal()
 
