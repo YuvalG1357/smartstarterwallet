@@ -25,7 +25,7 @@ def main_menu():
         elif choice == "3":
             break
         else:
-            print("אפשרות לא חוקית")
+            print("Invalid option!")
 
 if __name__ == "__main__":
     main_menu()
